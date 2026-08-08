@@ -1,4 +1,3 @@
-Markdown
 # PyTorch Fundamentals
 
 Self-directed practice repository covering the core building blocks of PyTorch — tensors, autograd, `nn.Module`, training loops, GPU acceleration, and a full regression mini-project.
@@ -141,6 +140,9 @@ CPU: Intel i5-10300H, 8GB RAM
 Python: 3.12.10 (venv)
 
 OS: Windows
+```
+---
 
-Learning Notes
+## Learning Notes
+
 Code here is deliberately verbose and heavily commented — the priority was understanding why each line is needed (e.g., why scale after splitting, why synchronize() before timing GPU code, why .eval() matters with Dropout) rather than writing the shortest possible implementation. This repo exists to build a solid, hands-on understanding of PyTorch and deep learning fundamentals through practice.
