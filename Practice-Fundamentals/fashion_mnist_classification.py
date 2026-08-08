@@ -89,7 +89,7 @@ for e in range(epochs):
     correct_predictions_test=0
     total_test_samples = 0
     with torch.no_grad(): # Disable gradient computation during testing for speed and memory saving
-        for b, (X_test, y_test) in enumerate(test_loader):
+        for X_test, y_test in test_loader:
             y_eval = Fashion(X_test)
             predictions = torch.argmax(y_eval, dim=1)
             correct_predictions_test += (predictions == y_test).sum().item()
