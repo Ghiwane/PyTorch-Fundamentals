@@ -19,6 +19,7 @@ class Fashion_model(nn.Module):
             nn.Flatten(),
             nn.Linear(784, 128),
             nn.ReLU(),
+            nn.Dropout(0.2),
             nn.Linear(128, 64),
             nn.ReLU(),
             nn.Linear(64, 10)
@@ -30,9 +31,9 @@ torch.manual_seed(17)
 Fashion = Fashion_model()
 
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(Fashion.parameters(), lr=0.01)
+optimizer = torch.optim.Adam(Fashion.parameters(), lr=0.001)
 
-epochs = 20
+epochs = 10
 train_losses = []
 test_losses = []
 train_correct = []
@@ -65,30 +66,38 @@ for e in range(epochs):
     epoch_loss = running_loss / total_samples
     epoch_accuracy = (correct_predictions_train / total_samples) * 100
     
-    print(f"Epoch [{e+1}/{epochs}] "
-        f"| Loss : {epoch_loss:.4f} "
-        f"| Accuracy : {epoch_accuracy:.2f}%")
+    print(f"Epoch train [{e+1}/{epochs}] "
+        f"| Loss train : {epoch_loss:.4f} "
+        f"| Accuracy train : {epoch_accuracy:.2f}%")
 
-    train_losses.append(loss)
+    train_losses.append(epoch_loss)
     train_correct.append(correct_predictions_train)
 
     Fashion.eval()
+    running_loss_test=0.0
+    correct_predictions_test=0
+    total_test_samples = 0
     with torch.no_grad():
         for b, (X_test, y_test) in enumerate(test_loader):
             y_eval = Fashion(X_test)
             predictions = torch.argmax(y_eval, dim=1)
             correct_predictions_test += (predictions == y_test).sum().item()
+            loss = criterion(y_eval, y_test)
+            running_loss_test += loss.item() * y_test.size(0)
+            total_test_samples += y_test.size(0)
 
-    loss = criterion(y_eval, y_test)
-    test_losses.append(loss)
+    epoch_loss_test = running_loss_test / total_test_samples
+    epoch_accuracy_test = (correct_predictions_test / total_test_samples) * 100
+        
+    print(f"Epoch test [{e+1}/{epochs}] "
+        f"| Loss test : {epoch_loss_test:.4f} "
+        f"| Accuracy test : {epoch_accuracy_test:.2f}%")        
+    test_losses.append(epoch_loss_test)
     test_correct.append(correct_predictions_test)
 
 current_time = time.time()
 total_time = (current_time - start_time)/60
 print(f'it took {total_time:.2f} minutes to train!')
-
-train_losses = [tl.item() for tl in train_losses]
-test_losses = [tl.item() for tl in test_losses]
 
 
 plt.plot(train_losses, label="Training loss")
